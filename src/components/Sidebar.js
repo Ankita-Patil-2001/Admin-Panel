@@ -61,7 +61,7 @@ const Sidebar = () => {
               icon: <FaMoneyBillTransfer />,
               label: "Transfer Money",
             },                                                            
-            { to: "/commission", icon: <RiMoneyRupeeCircleFill />, label: "Commission" },
+            {/* { to: "/commission", icon: <RiMoneyRupeeCircleFill />, label: "Commission" }, */}
           ].map((item, index) => (
             <li key={index} className="mb-4">
               <Link
@@ -98,11 +98,11 @@ const Sidebar = () => {
                 <FaMoneyBillTransfer className="h-5 w-5" />
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link to="/commission" className="flex justify-center">
                 <RiMoneyRupeeCircleFill className="h-5 w-5" />
               </Link>
-            </li>
+            </li> */}
           </ul>
         </div>
       )}
