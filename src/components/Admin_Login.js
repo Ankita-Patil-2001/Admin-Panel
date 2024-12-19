@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Constant from "../utils/Constant";
 import { FaEyeSlash } from "react-icons/fa";
 import { RxEyeOpen } from "react-icons/rx";
+import Constant from "../utils/Constant"; // Update the path to your Constant.js file
+
 function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,7 +16,7 @@ function AdminLogin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-
+  
     try {
       const response = await fetch(`${Constant.BASE_URL}/admin/dashLogin`, {
         method: "POST",
@@ -24,41 +25,23 @@ function AdminLogin() {
         },
         body: JSON.stringify({ email, password }),
       });
-
+  
       const data = await response.json();
-      
+  
       if (!response.ok) {
         throw new Error(data.message || "Login failed");
       }
-
-      // Check if we have the required data
-      if (!data.token) {
-        throw new Error("No authentication token received");
-      }
-
-      // Store the authentication token
+  
+      // Save data to localStorage
       localStorage.setItem("authToken", data.token);
-      
-      // Store admin ID - adjust the path according to your API response structure
-      // It might be data.admin._id or data.adminId or data.user._id
-      if (data.admin?._id) {
-        localStorage.setItem("adminId", data.admin._id);
-      } else if (data.user?._id) {
-        localStorage.setItem("adminId", data.user._id);
-      } else if (data.adminId) {
-        localStorage.setItem("adminId", data.adminId);
-      } else {
-        console.warn("Admin ID not found in response");
-      }
-
-      // Show success message
+      localStorage.setItem("adminId", data.adminId);
+      localStorage.setItem("adminName", data.name); 
+      localStorage.setItem("wallet", data.wallet);
+  
       toast.success("Login successful!");
-      
-      // Navigate to the sub-admin page
       setTimeout(() => {
-        navigate("/subadmin");
+        navigate("/subadmin"); // Redirect after successful login
       }, 1000);
-
     } catch (error) {
       console.error("Login error:", error);
       toast.error(error.message || "Login failed. Please try again.");
@@ -66,10 +49,12 @@ function AdminLogin() {
       setIsLoading(false);
     }
   };
- // Toggle password visibility
- const togglePasswordVisibility = () => {
-  setPasswordVisible(!passwordVisible);
-};
+  
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-900">
       <div className="bg-gray-800 p-8 rounded-lg shadow-lg xl:w-96 xsm:w-[280px]">
@@ -78,10 +63,12 @@ function AdminLogin() {
         </h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-gray-300 xsm:text-[15px] xl:text-[18px]">Username</label>
+            <label className="block text-gray-300 xsm:text-[15px] xl:text-[18px]">
+              Email
+            </label>
             <input
               type="text"
-              id="username"
+              id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -89,7 +76,9 @@ function AdminLogin() {
             />
           </div>
           <div className="relative">
-            <label className="block text-gray-300 xsm:text-[15px] xl:text-[18px]">Password</label>
+            <label className="block text-gray-300 xsm:text-[15px] xl:text-[18px]">
+              Password
+            </label>
             <input
               type={passwordVisible ? "text" : "password"}
               id="password"
@@ -113,15 +102,13 @@ function AdminLogin() {
             type="submit"
             className="w-full xl:py-2 xsm:py-1.5 rounded bg-green-600 text-white xl:text-[18px] xsm:text-[14px] mt-4 font-semibold hover:bg-green-700 transition duration-200"
           >
-            Submit
+            {isLoading ? "Logging in..." : "Submit"}
           </button>
         </form>
       </div>
       <ToastContainer />
     </div>
   );
-};
-
-
+}
 
 export default AdminLogin;
