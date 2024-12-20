@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { FaMoneyBillTransfer } from "react-icons/fa6";
 import { RiMoneyRupeeCircleFill } from "react-icons/ri";
+import { AiOutlineTransaction } from "react-icons/ai";
+import { GrPowerReset } from "react-icons/gr";
 
 const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -60,7 +62,17 @@ const Sidebar = () => {
               to: "/moneytransfer",
               icon: <FaMoneyBillTransfer />,
               label: "Transfer Money",
-            },                                                            
+            }, 
+            {
+              to: "/transaction",
+              icon: <AiOutlineTransaction />,
+              label: "Transaction",
+            },    
+            {
+              to: "/resetpassword",
+              icon: <GrPowerReset />,
+              label: "Reset Password",
+            },                                                       
             {/* { to: "/commission", icon: <RiMoneyRupeeCircleFill />, label: "Commission" }, */}
           ].map((item, index) => (
             <li key={index} className="mb-4">
@@ -98,6 +110,17 @@ const Sidebar = () => {
                 <FaMoneyBillTransfer className="h-5 w-5" />
               </Link>
             </li>
+            <li>
+              <Link to="/transaction" className="flex justify-center">
+                <AiOutlineTransaction className="h-5 w-5" />
+              </Link>
+            </li>
+            <li>
+              <Link to="/resetpassword" className="flex justify-center">
+                <GrPowerReset className="h-5 w-5" />
+              </Link>
+            </li>
+           
             {/* <li>
               <Link to="/commission" className="flex justify-center">
                 <RiMoneyRupeeCircleFill className="h-5 w-5" />

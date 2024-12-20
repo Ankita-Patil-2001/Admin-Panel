@@ -7,7 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function MoneyTransfer() {
-  const [subAdmins, setSubAdmins] = useState([]); // Always initialize as an array
+  const [subAdmins, setSubAdmins] = useState([]); 
   const [selectedSubAdmin, setSelectedSubAdmin] = useState("");
   const [amount, setAmount] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -107,12 +107,11 @@ export default function MoneyTransfer() {
         toast.success("Money transferred successfully!");
         setAmount("");
         setSelectedSubAdmin("");
-        fetchSubAdmins(); // Refresh sub-admins list to show updated balances
+        fetchSubAdmins();
       }
     } catch (err) {
       console.error("Error during money transfer:", err);
 
-      // Display error messages returned by the API
       if (err.response?.status === 400) {
         toast.error(
           err.response.data.message || "Bad request: All fields are required."

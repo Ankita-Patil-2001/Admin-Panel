@@ -13,7 +13,6 @@ export default function SubAdmin() {
   useEffect(() => {
     const fetchSubAdmins = async () => {
       try {
-        // Get adminId and token from localStorage
         const adminId = localStorage.getItem("adminId");
         const token = localStorage.getItem("authToken");
   
@@ -34,11 +33,13 @@ export default function SubAdmin() {
           }
         );
   
-        // Check if the response contains 'subadmins' property
-        if (response.data?.subadmins && Array.isArray(response.data.subadmins)) {
-          setSubAdmins(response.data.subadmins); // Extract the array correctly
+        if (
+          response.data?.subadmins &&
+          Array.isArray(response.data.subadmins)
+        ) {
+          setSubAdmins(response.data.subadmins);
         } else {
-          setSubAdmins([]); // Handle cases where the response doesn't contain sub-admin data
+          setSubAdmins([]);
           toast.error("Invalid data received from the server.");
         }
       } catch (err) {
@@ -53,13 +54,51 @@ export default function SubAdmin() {
     };
   
     fetchSubAdmins();
-  }, [navigate]);
+  }, [navigate]); // फक्त `navigate` dependency ठेवली.
+  
+  const handleResetLogin = async (subAdminId) => {
+    try {
+      const token = localStorage.getItem("authToken");
+  
+      const response = await axios.post(
+        `${Constant.BASE_URL}/admin/subadmin/reset-login/${subAdminId}`,
+        {},
+        {
+          headers: {
+            Authorization: token.startsWith("Bearer ")
+              ? token
+              : `Bearer ${token}`,
+          },
+        }
+      );
+  
+      if (response.data.success) {
+        toast.success("Login status reset successfully");
+  
+        // Update the state dynamically
+        setSubAdmins((prevSubAdmins) =>
+          prevSubAdmins.map((subAdmin) =>
+            subAdmin.subAdminId === subAdminId
+              ? { ...subAdmin, isLoggedIn: false }
+              : subAdmin
+          )
+        );
+      } else {
+        toast.error(response.data.message || "Failed to reset login status");
+      }
+    } catch (err) {
+      console.error("Error resetting login:", err);
+      toast.error(
+        err.response?.data?.message || "Failed to reset login status"
+      );
+    }
+  };
   
 
   return (
     <>
       <Navbar />
-      <div className="xl:p-6 xsm:pt-[55px] xsm:p-3 xsm:pl-[25px] xs:pl-[20px] bg-gray-200 min-h-screen xl:w-full overflow-auto xsm:w-[270px] xs:w-[320px] xss:w-[355px] iphone12:w-[335px] iphone14:w-[370px] pixel7:w-[355px] gals8:w-[310px] galaxyz:w-[293px] mxs:w-[370px]">
+      <div className="xl:p-6 xsm:pt-[55px] xsm:p-3 xsm:pl-[25px] xs:pl-[20px] bg-gray-200 min-h-screen xl:w-full overflow-auto xsm:w-[270px]">
         <h1 className="xl:text-3xl xsm:text-lg font-bold text-gray-800 mb-4">
           Sub-Admins
         </h1>
@@ -81,17 +120,11 @@ export default function SubAdmin() {
                     <th className="xl:px-6 xl:py-3 xsm:px-6 xsm:py-1 text-left xl:text-sm xsm:text-[11px] font-medium text-gray-500 uppercase tracking-wider">
                       Creator Admin ID
                     </th>
-                    {/* <th className="xl:px-6 xl:py-3 xsm:px-6 xsm:py-1 text-left xl:text-sm xsm:text-[11px] font-medium text-gray-500 uppercase tracking-wider">
-                      Creator Name
+                    <th className="xl:px-6 xl:py-3 xsm:px-6 xsm:py-1 text-left xl:text-sm xsm:text-[11px] font-medium text-gray-500 uppercase tracking-wider">
+                      LoggedIn
                     </th>
                     <th className="xl:px-6 xl:py-3 xsm:px-6 xsm:py-1 text-left xl:text-sm xsm:text-[11px] font-medium text-gray-500 uppercase tracking-wider">
-                      Creator Email
-                    </th> */}
-                    <th className="xl:px-6 xl:py-3 xsm:px-6 xsm:py-1 text-left xl:text-sm xsm:text-[11px] font-medium text-gray-500 uppercase tracking-wider">
-                      Commission
-                    </th>
-                    <th className="xl:px-6 xl:py-3 xsm:px-6 xsm:py-1 text-left xl:text-sm xsm:text-[11px] font-medium text-gray-500 uppercase tracking-wider">
-                      Wallet
+                      Actions
                     </th>
                   </tr>
                 </thead>
@@ -104,23 +137,22 @@ export default function SubAdmin() {
                       <td className="xl:px-6 xl:py-4 xsm:px-6 xsm:py-1 xl:text-sm xsm:text-[11px] whitespace-nowrap font-medium text-gray-900">
                         {subAdmin.email}
                       </td>
-                      <td className="xl:px-6 xl:py-4 xsm:px-6 xsm:py-1 xl:text-sm xsm:text-[11px] whitespace-nowrap text-sm font-medium text-gray-900">
+                      <td className="xl:px-6 xl:py-4 xsm:px-6 xsm:py-1 xl:text-sm xsm:text-[11px] whitespace-nowrap font-medium text-gray-900">
                         {new Date(subAdmin.createdAt).toLocaleDateString()}
                       </td>
                       <td className="xl:px-6 xl:py-4 xsm:px-6 xsm:py-1 xl:text-sm xsm:text-[11px] whitespace-nowrap font-medium text-gray-900">
                         {subAdmin.createdBy}
                       </td>
-                      {/* <td className="xl:px-6 xl:py-4 xsm:px-6 xsm:py-1 xl:text-sm xsm:text-[11px] whitespace-nowrap  font-medium text-gray-900">
-                        {subAdmin.creatorAdmin?.name}
-                      </td>
-                      <td className="xl:px-6 xl:py-4 xsm:px-6 xsm:py-1 xl:text-sm xsm:text-[11px] whitespace-nowrap  font-medium text-gray-900">
-                        {subAdmin.creatorAdmin?.email}
-                      </td> */}
                       <td className="xl:px-6 xl:py-4 xsm:px-6 xsm:py-1 xl:text-sm xsm:text-[11px] whitespace-nowrap font-medium text-gray-900">
-                        {subAdmin.commission}
+                        {subAdmin.isLoggedIn ? "Yes" : "No"}
                       </td>
                       <td className="xl:px-6 xl:py-4 xsm:px-6 xsm:py-1 xl:text-sm xsm:text-[11px] whitespace-nowrap font-medium text-gray-900">
-                        {subAdmin.wallet}
+                        <button
+                          className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600"
+                          onClick={() => handleResetLogin(subAdmin.subAdminId)}
+                        >
+                          Reset Login
+                        </button>
                       </td>
                     </tr>
                   ))}

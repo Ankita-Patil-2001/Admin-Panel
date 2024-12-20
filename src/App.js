@@ -7,6 +7,8 @@ import CreateSubAdmin from "./components/Create";
 import SubAdmin from "./components/SubAdmin";
 import MoneyTransfer from "./components/MoneyTransfer";
 import Commission from "./components/Commission";
+import Transaction from "./components/Transaction";
+import Reset_Pasword from "./components/Reset_Pasword";
 
 const AppLayout = ({ children }) => {
   return (
@@ -42,6 +44,8 @@ const App = () => {
                 <Route path="/subadmin" element={<SubAdmin />} />
                 <Route path="/moneytransfer" element={<MoneyTransfer />} />
                 <Route path="/commission" element={<Commission />} />
+                <Route path="/transaction" element={<Transaction />} />
+                <Route path="/resetpassword" element={<Reset_Pasword />} />
               </Routes>
             </AppLayout>
           }
